@@ -8,7 +8,7 @@ public static class TokenHelper
         (TokenSettings settings, ClaimsPrincipal principal)
     {
         SymmetricSecurityKey key = new
-            (Encoding.UTF8.GetBytes(settings.SecretKey));
+            (Encoding.UTF8.GetBytes(settings.Secret));
 
         SigningCredentials credentials = new
             (key, SecurityAlgorithms.HmacSha256);

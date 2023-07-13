@@ -5,13 +5,13 @@ public class TokenSettings
     public string Audience { get; set; }
     public int Expires { get; set; }
     public string Issuer { get; set; }
-    public string SecretKey { get; set; }
+    public string Secret { get; set; }
     public string Service { get; set; }
 
     public TokenValidationParameters GetParameters()
     {
         SymmetricSecurityKey key = new
-            (Encoding.UTF8.GetBytes(SecretKey));
+            (Encoding.UTF8.GetBytes(Secret));
 
         return new()
         {

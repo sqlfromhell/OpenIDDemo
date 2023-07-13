@@ -24,11 +24,7 @@ public class AccountController
         => HttpContext.User is not null
         && HttpContext.User.Identity.IsAuthenticated
         ? ReturnCallback(returnUrl)
-        : View("Login",
-            new LoginViewModel()
-            {
-                ReturnUrl = returnUrl
-            });
+        : View(new LoginViewModel(returnUrl));
 
     [HttpPost]
     public async Task<IActionResult> LoginAsync
@@ -53,7 +49,7 @@ public class AccountController
                 ("", "Invalid username or password");
         }
 
-        return View("Login", model);
+        return View(model);
     }
 
     [HttpGet]
@@ -71,14 +67,12 @@ public class AccountController
     public IActionResult ReturnCallback
         (string returnUrl)
     {
-        var principal = HttpContext.User;
-
-        if (principal is null
+        if (HttpContext.User is null
             || !HttpContext.User.Identity.IsAuthenticated)
             return Unauthorized();
 
         var token = TokenHelper
-            .Get(TokenSettings, principal);
+            .Get(TokenSettings, HttpContext.User);
 
         var url = TokenHelper
             .GetReturnUrl(token, returnUrl);

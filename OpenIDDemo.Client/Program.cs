@@ -6,18 +6,25 @@ var settings = builder.Configuration
     .Get<TokenSettings>();
 
 builder.Services
-    .AddSingleton(settings)
+    .AddSingleton(settings);
+
+builder.Services
     .AddAuthentication
         (CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(option =>
+    .AddCookie(e =>
     {
-        option.LoginPath = "/Account/Login";
-        option.LogoutPath = "/Account/Logout";
-        //option.ReturnUrlParameter = "returnUrl";
-    })
-    .AddJwtBearer(options =>
-        options.TokenValidationParameters
-            = settings.GetParameters());
+        e.Cookie.Name =
+            "Authentication";
+        e.Cookie.HttpOnly = true;
+        e.Cookie.SameSite =
+            SameSiteMode.Strict;
+        e.ExpireTimeSpan = TimeSpan
+            .FromSeconds(settings.Expires);
+        e.LoginPath = "/Account/Login";
+        e.LogoutPath = "/Account/Logout";
+        e.SlidingExpiration = true;
+        e.ReturnUrlParameter = "returnUrl";
+    });
 
 builder.Services
     .AddControllersWithViews();

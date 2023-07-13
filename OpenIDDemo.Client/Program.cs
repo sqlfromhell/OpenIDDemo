@@ -6,44 +6,29 @@ var settings = builder.Configuration
     .Get<TokenSettings>();
 
 builder.Services
-    .AddSingleton(settings);
-
-builder.Services
+    .AddSingleton(settings)
     .AddAuthentication
         (CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(option =>
     {
         option.LoginPath = "/Account/Login";
         option.LogoutPath = "/Account/Logout";
+        //option.ReturnUrlParameter = "returnUrl";
     })
     .AddJwtBearer(options =>
         options.TokenValidationParameters
             = settings.GetParameters());
-
-//.AddOpenIdConnect(options =>
-//{
-//    options.Authority = settings.Issuer;
-//    options.ClientId = settings.Audience;
-//    options.ClientSecret = settings.SecretKey;
-//    options.ResponseType = OpenIdConnectResponseType.Code;
-//    options.Scope.Add("openid");
-//    options.Scope.Add("profile");
-//    options.Scope.Add("email");
-//    options.CallbackPath = "/signin-oidc";
-//    options.SaveTokens = true;
-//    options.RequireHttpsMetadata = false;
-//});
 
 builder.Services
     .AddControllersWithViews();
 
 var app = builder.Build();
 
-app.UseDeveloperExceptionPage();
-app.UseStaticFiles();
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseDeveloperExceptionPage()
+    .UseStaticFiles()
+    .UseRouting()
+    .UseAuthentication()
+    .UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
@@ -51,3 +36,9 @@ app.MapControllerRoute(
 );
 
 app.Run();
+
+namespace OpenIDDemo.Client
+{
+    public partial class Program
+    { }
+}

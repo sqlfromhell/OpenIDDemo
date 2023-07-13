@@ -1,86 +1,90 @@
-﻿//using OpenIDDemo.Server.Helpers;
+﻿namespace OpenIDDemo.Server.Controllers;
 
-//namespace OpenIDDemo.Server.Controllers;
+[Route("connect")]
+[ApiController]
+public class OpenIdController
+    : ControllerBase
+{
+    private const string TOKEN =
+        CookieAuthenticationDefaults.AuthenticationScheme;
 
-//[Route("connect")]
-//[ApiController]
-//public class OpenIdController
-//    : ControllerBase
-//{
-//    private const string TOKEN =
-//        CookieAuthenticationDefaults.AuthenticationScheme;
+    private readonly TokenSettings TokenSettings;
+    private readonly IUserRepository UserRepository;
 
-//    private readonly TokenSettings TokenSettings;
+    public OpenIdController(
+        TokenSettings tokenSettings,
+        IUserRepository userRepository
+    )
+    {
+        TokenSettings = tokenSettings;
+        UserRepository = userRepository;
+    }
 
-//    public OpenIdController
-//        (TokenSettings tokenSettings)
-//        => TokenSettings = tokenSettings;
+    [HttpGet("authorize")]
+    public IActionResult Authorize
+        ([FromQuery] OpenIdAuthorizeRequest request)
+    {
+        var user = UserRepository
+            .Get(request.Username, request.Password);
 
-//    [HttpGet("authorize")]
-//    public IActionResult Authorize
-//        ([FromQuery] OpenIdAuthorizeRequest request)
-//    {
-//        var redirectUrl = $"{request.RedirectUri}?code=your-authorization-code&state={request.State}";
+        if (user is null)
+            return Unauthorized();
 
-//        return Redirect(redirectUrl);
-//    }
+        var returnUrl = TokenHelper
+            .GetAuthorizeReturnUrl(
+                request.RedirectUri,
+                user.PublicId,
+                request.State
+            );
 
-//    [HttpGet("logout")]
-//    public IActionResult Logout
-//        ([FromQuery] string postLogoutRedirectUri)
-//    {
-//        var redirectUrl = string.IsNullOrEmpty(postLogoutRedirectUri)
-//            ? "/"
-//            : postLogoutRedirectUri;
+        return Redirect(returnUrl);
+    }
 
-//        return Redirect(redirectUrl);
-//    }
+    [HttpGet("logout")]
+    public IActionResult Logout
+        ([FromQuery] string postLogoutRedirectUri)
+    {
+        var redirectUrl =
+            string.IsNullOrEmpty(postLogoutRedirectUri)
+                ? "/"
+                : postLogoutRedirectUri;
 
-//    [HttpPost("token")]
-//    public IActionResult Token
-//        ([FromForm] OpenIdTokenRequest model)
-//    {
-//        if (model.UserName == "admin"
-//            && model.Password == "password")
-//        {
-//            List<Claim> claims = new()
-//            {
-//                new (ClaimTypes.Name, model.UserName),
-//            };
+        return Redirect(redirectUrl);
+    }
 
-//            ClaimsIdentity identity =
-//                new(claims, TOKEN);
+    [HttpPost("token")]
+    public IActionResult Token
+        ([FromForm] OpenIdTokenRequest model)
+    {
+        var user = UserRepository
+            .Get(model.UserName, model.Password);
 
-//            ClaimsPrincipal principal =
-//                new(identity);
+        return user is null
+            ? Unauthorized()
+            : Ok(new OpenIdTokenResponse()
+            {
+                AccessToken = TokenHelper
+                    .Get(TokenSettings, user.GetPrincipal(TOKEN)),
+                ExpiresIn =
+                    TokenSettings.Expires
+            });
+    }
 
-//            return Ok(new OpenIdTokenResponse()
-//            {
-//                AccessToken = TokenHelper
-//                    .Get(TokenSettings, principal),
-//                ExpiresIn =
-//                    TokenSettings.Expires
-//            });
-//        }
+    [HttpGet("userinfo")]
+    public IActionResult UserInfo
+        ([FromQuery] string accessToken)
+    {
+        var principal =
+            TokenSettings
+                .GetPrincipal(accessToken);
 
-//        return Unauthorized();
-//    }
+        if (principal is null)
+            return Unauthorized();
 
-//    [HttpGet("userinfo")]
-//    public IActionResult UserInfo
-//        ([FromQuery] string accessToken)
-//    {
-//        var principal =
-//            TokenSettings
-//                .GetPrincipal(accessToken);
+        var userInfo =
+            principal.Claims
+                .ToDictionary(e => e.Type, e => e.Value);
 
-//        if (principal is null)
-//            return Unauthorized();
-
-//        var userInfo =
-//            principal.Claims
-//                .ToDictionary(e => e.Type, e => e.Value);
-
-//        return Ok(userInfo);
-//    }
-//}
+        return Ok(userInfo);
+    }
+}

@@ -26,6 +26,34 @@ public static class TokenHelper
             .WriteToken(jwtToken);
     }
 
+    public static string GetAuthorizeReturnUrl
+        (string returnUrl, Guid userId, string state)
+    {
+        if (string.IsNullOrEmpty(returnUrl)
+            || !(
+                returnUrl.StartsWith("http://")
+                || returnUrl.StartsWith("https://"))
+            )
+            return returnUrl;
+
+        UriBuilder uriBuilder
+            = new(returnUrl);
+
+        var query = HttpUtility
+            .ParseQueryString
+                (uriBuilder.Query);
+
+        query["code"] = userId.ToString();
+
+        query["state"] = state;
+
+        uriBuilder.Query = query
+            .ToString();
+
+        return uriBuilder
+            .ToString();
+    }
+
     public static string GetLoginUrl
         (TokenSettings settings, string returnUrl)
         => GetServiceUrl(settings, "Account/Login", returnUrl);
@@ -37,6 +65,13 @@ public static class TokenHelper
     public static string GetReturnUrl
         (string token, string returnUrl)
     {
+        if (string.IsNullOrEmpty(returnUrl)
+            || !(
+                returnUrl.StartsWith("http://")
+                || returnUrl.StartsWith("https://"))
+            )
+            return returnUrl;
+
         UriBuilder uriBuilder
             = new(returnUrl);
 

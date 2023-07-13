@@ -7,15 +7,14 @@ var settings = builder.Configuration
 
 builder.Services
     .AddSingleton(settings)
-    .AddScoped<IUserRepository, UserRepository>();
-
-builder.Services
+    .AddScoped<IUserRepository, UserRepository>()
     .AddAuthentication
         (CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(option =>
     {
         option.LoginPath = "/Account/Login";
         option.LogoutPath = "/Account/Logout";
+        //option.ReturnUrlParameter = "returnUrl";
     })
     .AddJwtBearer(options =>
         options.TokenValidationParameters
@@ -26,11 +25,11 @@ builder.Services
 
 var app = builder.Build();
 
-app.UseDeveloperExceptionPage();
-app.UseStaticFiles();
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseDeveloperExceptionPage()
+    .UseStaticFiles()
+    .UseRouting()
+    .UseAuthentication()
+    .UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
@@ -38,3 +37,9 @@ app.MapControllerRoute(
 );
 
 app.Run();
+
+namespace OpenIDDemo.Server
+{
+    public partial class Program
+    { }
+}

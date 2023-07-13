@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenIDDemo.Client", "OpenID
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIDDemo.Base", "OpenIDDemo.Base\OpenIDDemo.Base.csproj", "{26FA4805-B238-47F8-8B6F-1641AEE82EED}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2299F325-203A-4BE7-9489-3436367C10F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIDDemo.Tests", "OpenIDDemo.Tests\OpenIDDemo.Tests.csproj", "{F32531ED-4B80-460A-BB79-9B51419D8225}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,9 +31,16 @@ Global
 		{26FA4805-B238-47F8-8B6F-1641AEE82EED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26FA4805-B238-47F8-8B6F-1641AEE82EED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26FA4805-B238-47F8-8B6F-1641AEE82EED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F32531ED-4B80-460A-BB79-9B51419D8225}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F32531ED-4B80-460A-BB79-9B51419D8225}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F32531ED-4B80-460A-BB79-9B51419D8225}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F32531ED-4B80-460A-BB79-9B51419D8225}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F32531ED-4B80-460A-BB79-9B51419D8225} = {2299F325-203A-4BE7-9489-3436367C10F2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1943699F-F202-4A6D-B2BD-212DCD821AFD}

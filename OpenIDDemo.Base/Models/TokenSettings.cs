@@ -5,7 +5,6 @@ public class TokenSettings
     public string Audience { get; set; }
     public int Expires { get; set; }
     public string Issuer { get; set; }
-    public string Protocol { get; set; }
     public string SecretKey { get; set; }
     public string Service { get; set; }
 

@@ -32,7 +32,7 @@ public class AccountController
 
     [HttpPost]
     public async Task<IActionResult> LoginAsync
-        ([FromForm] LoginViewModel model)
+        (LoginViewModel model)
     {
         if (ModelState.IsValid)
         {
@@ -41,19 +41,9 @@ public class AccountController
 
             if (user is not null)
             {
-                List<Claim> claims = new()
-                {
-                    new (ClaimTypes.Name, user.UserName),
-                };
-
-                ClaimsIdentity identity =
-                    new(claims, TOKEN);
-
-                ClaimsPrincipal principal =
-                    new(identity);
-
                 await HttpContext
-                    .SignInAsync(TOKEN, principal);
+                    .SignInAsync(TOKEN, user
+                        .GetPrincipal(TOKEN));
 
                 return RedirectToAction("ReturnCallback",
                     new { returnUrl = model.ReturnUrl });
@@ -73,8 +63,9 @@ public class AccountController
         await HttpContext
             .SignOutAsync();
 
-        return Redirect
-            (returnUrl);
+        return string.IsNullOrEmpty(returnUrl)
+            ? RedirectToAction("Index", "Home")
+            : Redirect(returnUrl);
     }
 
     public IActionResult ReturnCallback
@@ -92,6 +83,8 @@ public class AccountController
         var url = TokenHelper
             .GetReturnUrl(token, returnUrl);
 
-        return Redirect(url);
+        return url is null
+            ? RedirectToAction("Protected", "Home")
+            : Redirect(url);
     }
 }

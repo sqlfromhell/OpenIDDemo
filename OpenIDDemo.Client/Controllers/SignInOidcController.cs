@@ -1,16 +1,16 @@
-﻿//namespace OpenIDDemo.Client.Controllers;
+﻿namespace OpenIDDemo.Client.Controllers;
 
-//public class SignInOidcController
-//    : Controller
-//{
-//    [HttpGet("/signin-oidc")]
-//    public async Task<IActionResult> GetAsync()
-//    {
-//        var result = await HttpContext.AuthenticateAsync
-//            (CookieAuthenticationDefaults.AuthenticationScheme);
+public class SignInOidcController
+    : Controller
+{
+    [HttpGet("/signin-oidc")]
+    public async Task<IActionResult> GetAsync()
+    {
+        var result = await HttpContext.AuthenticateAsync
+            (CookieAuthenticationDefaults.AuthenticationScheme);
 
-//        return result?.Succeeded == true
-//            ? RedirectToAction("Authorized", "Home")
-//            : RedirectToAction("Error", "Home");
-//    }
-//}
+        return result?.Succeeded == true
+            ? RedirectToAction("Authorized", "Home")
+            : RedirectToAction("Error", "Home");
+    }
+}

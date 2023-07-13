@@ -1,6 +1,4 @@
-﻿using OpenIDDemo.Base.Helpers;
-
-namespace OpenIDDemo.Client.Controllers;
+﻿namespace OpenIDDemo.Client.Controllers;
 
 public class AccountController
     : Controller
@@ -15,7 +13,7 @@ public class AccountController
         => TokenSettings = tokenSettings;
 
     public async Task<IActionResult> CallbackAsync
-        ([FromQuery] string token)
+        ([FromQuery] string token, [FromQuery] string returnUrl = null)
     {
         var principal =
             TokenSettings.GetPrincipal(token);
@@ -26,37 +24,48 @@ public class AccountController
         await HttpContext
             .SignInAsync(TOKEN, principal);
 
-        return RedirectToAction("Protected", "Home");
+        return string.IsNullOrEmpty(returnUrl)
+            ? RedirectToAction("Protected", "Home")
+            : Redirect(returnUrl);
     }
 
-    public async Task<IActionResult> CallbackLogoutAsync()
+    public async Task<IActionResult> CallbackLogoutAsync
+        ([FromQuery] string returnUrl = null)
     {
         await HttpContext
             .SignOutAsync(TOKEN);
 
-        return RedirectToAction("Index", "Home");
+        return string.IsNullOrEmpty(returnUrl)
+            ? RedirectToAction("Index", "Home")
+            : Redirect(returnUrl);
     }
 
-    public IActionResult Login()
+    public IActionResult Login
+        ([FromQuery] string returnUrl)
     {
-        var returnUrl = Url
-            .Action("Callback", "Account", null,
-                protocol: TokenSettings.Protocol);
+        var callbackUrl = Url
+            .ActionLink("Callback", "Account",
+                new { returnUrl },
+                HttpContext.Request.Scheme
+            );
 
         var url = TokenHelper.GetLoginUrl
-            (TokenSettings, returnUrl);
+            (TokenSettings, callbackUrl);
 
         return Redirect(url);
     }
 
-    public IActionResult Logout()
+    public IActionResult Logout
+        ([FromQuery] string returnUrl)
     {
-        var returnUrl = Url
-            .Action("CallbackLogout", "Account", null,
-                protocol: TokenSettings.Protocol);
+        var callbackUrl = Url
+            .ActionLink("CallbackLogout", "Account",
+                new { returnUrl },
+                HttpContext.Request.Scheme
+            );
 
         var url = TokenHelper.GetLogoutUrl
-            (TokenSettings, returnUrl);
+            (TokenSettings, callbackUrl);
 
         return Redirect(url);
     }

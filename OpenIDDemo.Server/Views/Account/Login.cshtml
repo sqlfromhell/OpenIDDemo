@@ -1,0 +1,14 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model LoginViewModel
+<form method="post" asp-action="Login">
+    <input type="hidden" asp-for="ReturnUrl" />
+    <div class="form-group">
+        <label asp-for="UserName">Username</label>
+        <input type="text" class="form-control" asp-for="UserName" value="@Model.UserName" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Password">Password</label>
+        <input type="password" class="form-control" asp-for="Password" value="@Model.Password" />
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>

@@ -1,0 +1,11 @@
+﻿global using Microsoft.AspNetCore.Authentication;
+global using Microsoft.AspNetCore.Authentication.Cookies;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Mvc;
+global using OpenIDDemo.Base.Helpers;
+global using OpenIDDemo.Base.Models;
+global using OpenIDDemo.Server.Models;
+global using OpenIDDemo.Server.Repositories;
+global using System.Security.Claims;
+global using System.Text.Json.Serialization;
